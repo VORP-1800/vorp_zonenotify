@@ -49,6 +49,22 @@ local function ShowLocationUi(text, location, duration)
     Citizen.InvokeNative(0xD05590C1AB38F068, struct1:Buffer(), struct2:Buffer(), 0, 1)
 end
 
+local function getIGWindSpeed()
+
+	local metric = ShouldUseMetricTemperature();
+	local windSpeed
+	local windSpeedUnit
+	if metric then
+		windSpeed = math.floor(GetWindSpeed())
+		windSpeedUnit = 'kph'
+	else
+		windSpeed = math.floor(GetWindSpeed() * 0.621371)
+		windSpeedUnit = 'mph'
+	end
+
+	return string.format('%d °%s', windSpeed, windSpeedUnit)
+end
+
 ---Formats hours and minutes for clock display
 ---@param iHours integer
 ---@param iMinutes integer
@@ -538,6 +554,8 @@ local function ProcessLocations(iGameTimer, vPlayerCoords, iPlayerPedId)
 end
 
 CreateThread(function()
+repeat Wait(5000) until LocalPlayer.state.IsInSession
+		
     while true do
         Wait(0)
         local iPed = PlayerPedId()
